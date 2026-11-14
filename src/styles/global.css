@@ -463,6 +463,11 @@ a:hover {
     transform 0.2s;
 }
 
+/* Etykieta może się zwęzić i złamać, gdy jedno słowo jest szersze niż przycisk. */
+.button > span {
+  min-width: 0;
+}
+
 .button:hover {
   background: var(--c-accent-hover);
   transform: translateY(var(--lift));

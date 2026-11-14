@@ -26,6 +26,11 @@ import { numbers } from "../content";
     padding-block: var(--s-4);
   }
 
+  /*
+   * Od 768 px liczby i opisy leżą we wspólnych wierszach wszystkich trzech kolumn (subgrid).
+   * Gdy w którejś kolumnie liczba zawinie się do dwóch wierszy (szerszy font systemowy),
+   * opisy pod spodem nadal stoją na jednej linii.
+   */
   dd {
     font-family: var(--font-sans);
     font-weight: 700;
@@ -38,13 +43,23 @@ import { numbers } from "../content";
   @container page (min-width: 48rem) {
     .numbers {
       grid-template-columns: repeat(3, var(--col-3));
+      grid-template-rows: auto auto;
       column-gap: var(--gutter);
-      /* Bez rozciągania: każda liczba ma własną wysokość, więc wiersze trzymają jedną linię. */
-      align-items: start;
     }
 
     .number {
+      display: grid;
+      grid-row: span 2;
+      grid-template-rows: subgrid;
       padding-block: var(--s-8);
+    }
+
+    dd {
+      grid-row: 1;
+    }
+
+    dt {
+      grid-row: 2;
     }
   }
 </style>

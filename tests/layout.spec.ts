@@ -14,15 +14,26 @@ for (const width of widths) {
   });
 }
 
-test("nagłówek mieści się w jednej linii na 360 px", async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 740 });
-  await page.goto("/");
-  const name = await page.locator(".site-name").boundingBox();
-  const cta = await page.locator(".header-cta").boundingBox();
-  expect(Math.abs(name!.y + name!.height / 2 - (cta!.y + cta!.height / 2))).toBeLessThan(4);
-  // Jeden wiersz nazwiska ma 64 px (dwie kratki siatki); zawinięcie dałoby 128 px.
-  expect(name!.height).toBeLessThanOrEqual(64);
-});
+/*
+ * Nagłówek jest dopasowany do fontów o typowej szerokości (San Francisco, Roboto, Arial).
+ * Arial jest wszędzie (na Linuksie jako Liberation Sans), więc daje ten sam wynik w każdym
+ * systemie; font systemowy sprawdzamy dodatkowo na macOS. Przy wyraźnie szerszym foncie
+ * (np. DejaVu) przycisk przechodzi do drugiego wiersza i tego pilnuje audyt siatki.
+ */
+const headerFonts = process.platform === "darwin" ? ["system-ui", "Arial"] : ["Arial"];
+
+for (const font of headerFonts) {
+  test(`nagłówek mieści się w jednej linii na 360 px (${font})`, async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await page.goto("/");
+    await page.addStyleTag({ content: `:root { --font-sans: ${font}; }` });
+    const name = await page.locator(".site-name").boundingBox();
+    const cta = await page.locator(".header-cta").boundingBox();
+    expect(Math.abs(name!.y + name!.height / 2 - (cta!.y + cta!.height / 2))).toBeLessThan(4);
+    // Jeden wiersz nazwiska ma 64 px (dwie kratki siatki); zawinięcie dałoby 128 px.
+    expect(name!.height).toBeLessThanOrEqual(64);
+  });
+}
 
 test("hero widoczny bez przewijania na 1280×800", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
