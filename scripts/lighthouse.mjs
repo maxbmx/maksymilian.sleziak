@@ -1,6 +1,6 @@
 // Lighthouse na profilu mobilnym: 3 przebiegi, mediana, progi poniżej.
 // Użycie: npm run build && npm run preview (w drugim terminalu), potem: npm run test:lighthouse
-// Albo z innym adresem: BASE_URL=https://podglad.pages.dev npm run test:lighthouse
+// Albo z innym adresem: BASE_URL=https://podglad.workers.dev npm run test:lighthouse
 import { chromium } from "@playwright/test";
 import * as chromeLauncher from "chrome-launcher";
 import lighthouse from "lighthouse";

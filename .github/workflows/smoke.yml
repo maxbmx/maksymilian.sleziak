@@ -3,7 +3,8 @@ name: Smoke test produkcji
 # Po każdym udanym deployu produkcyjnym sprawdza działającą stronę
 # (status 200, h1, JSON-LD, brak noindex, przekierowanie na https, nagłówki).
 on:
-  # Cloudflare Pages zgłasza deploy do GitHuba jako "deployment".
+  # Jeśli Cloudflare zgłosi deploy do GitHuba jako "deployment", test uruchomi się od razu.
+  # Niezależnie od tego działa raz dziennie i na żądanie.
   deployment_status:
   schedule:
     - cron: "30 6 * * *"

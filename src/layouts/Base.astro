@@ -12,8 +12,8 @@ interface Props {
 
 const { title = site.title, description = site.description, noindexOverride } = Astro.props;
 
-// Wersje preview (gałęzie inne niż main na Cloudflare Pages) nie mogą trafić do Google.
-const branch = process.env.CF_PAGES_BRANCH;
+// Wersje preview (gałęzie inne niż main w Cloudflare Workers Builds) nie mogą trafić do Google.
+const branch = process.env.WORKERS_CI_BRANCH;
 const noindex = noindexOverride ?? (Boolean(branch) && branch !== "main");
 
 const canonical = new URL(Astro.url.pathname, site.url).href;

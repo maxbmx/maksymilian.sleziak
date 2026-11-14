@@ -1,0 +1,10 @@
+// Cloudflare Workers: strona to wyłącznie pliki statyczne z dist/ (bez kodu Workera).
+// Nagłówki bezpieczeństwa i cache są w public/_headers.
+{
+  "name": "maksymilian-sleziak",
+  "compatibility_date": "2026-11-14",
+  "assets": {
+    "directory": "./dist/",
+    "not_found_handling": "404-page",
+  },
+}
