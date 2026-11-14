@@ -1,0 +1,99 @@
+---
+import { header, person } from "../content";
+import { contactLinks } from "../lib/links";
+import Button from "./Button.astro";
+---
+
+<header class="site-header" data-grid="32y">
+  <div class="container bar" data-grid="32">
+    <a class="site-name" href="/">
+      {person.name}
+    </a>
+    <Button class="header-cta" href={contactLinks.calendar ?? "#kontakt"}>
+      {header.cta}
+    </Button>
+  </div>
+</header>
+
+<style>
+  /*
+   * Wysokość 64 px: przycisk i wiersz nazwiska wypełniają ją w całości.
+   * Od 768 px 128 px: po jednej kratce 32 px nad i pod nimi.
+   */
+  .site-header {
+    background: var(--c-cream);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Przy mocno powiększonym tekście przycisk przechodzi do drugiego wiersza. */
+    flex-wrap: wrap;
+    gap: var(--s-1);
+    row-gap: 0;
+    min-height: var(--header-h);
+  }
+
+  /*
+   * Nazwisko jak znak graficzny: wersaliki, lekko rozstrzelone litery.
+   * Po najechaniu pod spodem pojawia się linia. Jest osobnym elementem, żeby kończyła się
+   * na ostatniej literze (podkreślenie objęłoby też odstęp po niej).
+   */
+  .site-name {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-weight: var(--fw-brand);
+    font-size: var(--fs-brand);
+    line-height: var(--lh-brand);
+    letter-spacing: var(--ls-brand);
+    text-transform: uppercase;
+  }
+
+  .site-name::after {
+    content: "";
+    position: absolute;
+    inset: auto var(--ls-brand) var(--s-2) 0;
+    height: var(--brand-line);
+    background: var(--c-link-line);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .site-name:hover::after,
+  .site-name:focus-visible::after {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-name::after {
+      transition: none;
+    }
+  }
+
+  /* Na najwęższych ekranach mniejsze pismo i dopełnienie, żeby całość zmieściła się w linii. */
+  .header-cta {
+    padding-inline: var(--s-1);
+    font-size: var(--fs-button);
+    white-space: nowrap;
+  }
+
+  @container page (min-width: 48rem) {
+    .header-cta {
+      padding-inline: var(--s-3);
+    }
+  }
+
+  /* Kontener 288 px (ekran poniżej 352 px): ciaśniejsze litery, żeby nic nie wyszło poza oś. */
+  @container page (max-width: 21.999rem) {
+    .site-name {
+      --ls-brand: 0.05em;
+    }
+
+    .header-cta {
+      font-size: var(--fs-button-narrow);
+    }
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+import { getImage as optimizeImage } from "astro:assets";
+import { images } from "../content";
+import { getImage } from "../lib/images";
+import { PORTRAIT_SIZES, PORTRAIT_WIDTHS } from "../lib/portrait";
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import Numbers from "../components/Numbers.astro";
+import Clients from "../components/Clients.astro";
+import Letter from "../components/Letter.astro";
+import Ai from "../components/Ai.astro";
+import About from "../components/About.astro";
+import Principles from "../components/Principles.astro";
+import Testimonials from "../components/Testimonials.astro";
+import Personal from "../components/Personal.astro";
+import Contact from "../components/Contact.astro";
+import Footer from "../components/Footer.astro";
+
+// Portret to największy element pierwszego ekranu (LCP), więc przeglądarka dostaje
+// informację o nim już w <head>. Parametry muszą być takie jak w Hero.astro.
+const portrait = await optimizeImage({
+  src: getImage(images.portrait),
+  widths: PORTRAIT_WIDTHS,
+  format: "avif",
+});
+---
+
+<Base>
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    type="image/avif"
+    imagesrcset={portrait.srcSet.attribute}
+    imagesizes={PORTRAIT_SIZES}
+    fetchpriority="high"
+  />
+  <Header />
+  <main id="tresc">
+    <Hero />
+    <Numbers />
+    <Clients />
+    <Letter />
+    <Ai />
+    <div class="row" data-grid="32y">
+      <div class="container split">
+        <About />
+        <Principles />
+      </div>
+    </div>
+    <Testimonials />
+    <Personal />
+    <Contact />
+  </main>
+  <Footer />
+</Base>

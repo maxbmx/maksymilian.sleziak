@@ -1,0 +1,36 @@
+---
+import type { Testimonial } from "../content";
+
+interface Props extends Testimonial {
+  size?: "large" | "small";
+}
+const { quote, name, role, company, size = "large" } = Astro.props;
+---
+
+<figure class:list={["quote", size]}>
+  <blockquote>
+    <p>„{quote}”</p>
+  </blockquote>
+  <figcaption>
+    <strong>{name}</strong>, {role}, {company}
+  </figcaption>
+</figure>
+
+<style>
+  .quote {
+    max-width: var(--w-quote);
+  }
+
+  blockquote {
+    font-style: italic;
+  }
+
+  figcaption {
+    font-size: var(--fs-caption);
+    line-height: var(--lh-caption);
+  }
+
+  figcaption strong {
+    font-size: inherit;
+  }
+</style>

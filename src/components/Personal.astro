@@ -1,0 +1,41 @@
+---
+import { Picture } from "astro:assets";
+import { images, personal } from "../content";
+import { getImage } from "../lib/images";
+---
+
+<section class="row" aria-labelledby="personal-heading" data-grid="32y">
+  <div class="container split">
+    <div class="col">
+      <figure class="media personal-photo" data-grid="32">
+        <Picture
+          src={getImage(images.bike)}
+          alt={personal.photoAlt}
+          widths={[480, 720, 960]}
+          sizes="(min-width: 74rem) 30rem, (min-width: 62rem) 26rem, (min-width: 48rem) 20rem, min(30rem, calc(100vw - 2rem))"
+          formats={["avif", "webp"]}
+        />
+      </figure>
+    </div>
+    <div class="col" data-snap data-grid="32">
+      <h2 id="personal-heading" class="section-heading">
+        {personal.heading}
+      </h2>
+      <p>{personal.text}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /*
+   * Ramka poziomego zdjęcia: szerokość kolumny, wysokość to 2/3 szerokości zaokrąglone
+   * do 32 px (480 × 320, 416 × 288, 320 × 224). Pierwsza wartość jest zapasem dla
+   * przeglądarek bez round(). Obraz jest kadrowany do ramki, nie rozciągany.
+   */
+  .personal-photo {
+    --frame-w: min(var(--w-media), var(--col-wide));
+
+    height: 12rem;
+    height: round(nearest, calc(var(--frame-w) * 2 / 3), var(--module));
+  }
+</style>

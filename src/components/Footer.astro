@@ -1,0 +1,51 @@
+---
+import { company, person } from "../content";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer" data-grid="32y">
+  <div class="container" data-snap data-grid="32">
+    <p class="footer-name">{person.name}</p>
+    <p>
+      {`© ${year} ${person.name}, ${person.role}`} <a href={company.url}>{company.name}</a>,{" "}
+      {person.city}
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    --c-focus: var(--c-footer-strong);
+    background: var(--c-footer-bg);
+    color: var(--c-footer-text);
+    padding-block: var(--s-8);
+    text-align: center;
+    font-size: var(--fs-caption);
+    line-height: var(--lh-caption);
+  }
+
+  .footer-name {
+    line-height: var(--lh-h3);
+    color: var(--c-footer-strong);
+    font-family: var(--font-sans);
+    font-weight: var(--fw-brand);
+    font-size: var(--fs-brand);
+    letter-spacing: var(--ls-brand);
+    text-transform: uppercase;
+  }
+
+  a {
+    text-decoration: underline;
+    text-decoration-color: var(--c-footer-line);
+    text-underline-offset: 0.3em;
+    transition:
+      color 0.3s,
+      text-decoration-color 0.3s;
+  }
+
+  /* Na czarnym tle podkreślenie po najechaniu rozjaśnia się (odpowiednik ciemnienia na jasnym). */
+  a:hover {
+    color: var(--c-footer-strong);
+    text-decoration-color: var(--c-footer-text);
+  }
+</style>

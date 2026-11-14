@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maksymilian.sleziak.com/sitemap-index.xml

@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Co poniedziałek: sprawdzenie linków zewnętrznych (np. czy profil LinkedIn nadal działa)
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Jakość i testy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalacja zależności
+        run: npm ci
+
+      - name: Przeglądarka do testów
+        run: npx playwright install --with-deps chromium
+
+      - name: Formatowanie i typy
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Walidacja HTML
+        run: npm run test:html
+
+      - name: Linki wewnętrzne
+        run: npm run test:links
+
+      - name: Hash skryptu w CSP
+        run: npm run test:csp
+
+      - name: Linki zewnętrzne
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: npm run test:links:external
+
+      - name: Testy Playwright (SEO, dostępność, układ, wygląd)
+        run: npm run test:e2e
+
+      - name: Lighthouse (mobile)
+        run: |
+          npm run preview &
+          npx wait-on@9.5.1 http://localhost:4321 --timeout 30000
+          npm run test:lighthouse
+
+      - name: Raporty przy błędzie
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: raporty
+          path: |
+            playwright-report/
+            test-results/
+            .lighthouse/
+          retention-days: 14
+
+  production-ready:
+    name: Gotowość do publikacji (placeholdery)
+    runs-on: ubuntu-24.04
+    # Na gałęzi main blokuje publikację, dopóki są placeholdery. Na PR tylko informuje.
+    continue-on-error: ${{ github.ref != 'refs/heads/main' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Build produkcyjny ze strażnikiem placeholderów
+        run: npm run build:prod

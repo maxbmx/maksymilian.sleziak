@@ -1,0 +1,112 @@
+---
+import { clients } from "../content";
+import { getLogo } from "../lib/images";
+
+// Pliki logotypów pochodzą z ageno.pl i są używane bez zmian: każdy to pole robocze
+// 600 × 400 (3:2) ze znakiem ułożonym i wyważonym przez autorów. Nie przycinamy ich
+// ani nie skalujemy osobno; wszystkie trafiają w identyczną ramkę 3:2 z siatki.
+const items = clients.items.map(({ name, logo }) => ({ name, logo: logo ? getLogo(logo) : null }));
+---
+
+<section class="row" aria-labelledby="clients-heading" data-grid="32y">
+  <div class="container clients-section">
+    <h2 id="clients-heading" class="clients-heading eyebrow">
+      {clients.heading}
+    </h2>
+    <ul class="clients" role="list" data-snap data-grid="32">
+      {items.map(({ name, logo }) => (
+        <li class="tile" data-grid="8">
+          {logo ? (
+            <img
+              src={logo.src}
+              alt={name}
+              width={logo.width}
+              height={logo.height}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <span class="client-name">{name}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .clients-section {
+    padding-block: var(--s-8);
+  }
+
+  .clients-heading {
+    padding-bottom: var(--s-4);
+  }
+
+  /*
+   * Pas logotypów bez tła. Każda ramka ma proporcję pliku, 3:2, i wymiary z siatki:
+   * 144 × 96 px w jednej kolumnie strony, 288 × 192 px (9 × 6 kratek) od 768 px.
+   * Ramki stoją przy krawędziach kontenera, a wolne miejsce dzieli się po równo między
+   * nie, zawsze w pełnych kratkach:
+   *   1120 px: 3 w rzędzie, odstęp 128 px      928 px: 3 w rzędzie, odstęp 32 px
+   *    736 px: 2 w rzędzie, odstęp 160 px      telefon: 2 w rzędzie, odstęp W − 288 px
+   * Rzędy stykają się; odstęp między znakami daje margines wbudowany w pliki.
+   */
+  .clients {
+    /* Najwyżej pół kontenera: przy mocno powiększonym tekście dwie ramki nadal się mieszczą. */
+    --frame-w: min(9rem, var(--w) / 2);
+    --frame-h: calc(var(--frame-w) * 2 / 3);
+
+    display: grid;
+    grid-template-columns: repeat(2, var(--frame-w));
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+  }
+
+  .tile {
+    display: grid;
+    place-items: center;
+    width: var(--frame-w);
+    height: var(--frame-h);
+  }
+
+  /* Znaki lekko wyciszone, pełna czerń po najechaniu. */
+  .tile img {
+    width: 100%;
+    height: 100%;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .tile:hover img {
+    opacity: 1;
+  }
+
+  .client-name {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h4);
+    line-height: var(--lh-h4);
+    text-align: center;
+  }
+
+  @container page (min-width: 48rem) {
+    .clients {
+      --frame-w: 18rem;
+      --frame-h: 12rem;
+    }
+  }
+
+  @container page (min-width: 62rem) {
+    .clients {
+      grid-template-columns: repeat(3, var(--frame-w));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile img {
+      transition: none;
+    }
+  }
+</style>

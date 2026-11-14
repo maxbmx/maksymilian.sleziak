@@ -1,0 +1,27 @@
+---
+import { principles } from "../content";
+---
+
+<section class="col" aria-labelledby="principles-heading" data-snap data-grid="32">
+  <h2 id="principles-heading" class="section-heading">
+    {principles.heading}
+  </h2>
+  <ul class="principles" role="list">
+    {principles.items.map((item) => (
+      <li>
+        <h3>{item.title}</h3>
+        <p>{item.text}</p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .principles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    list-style: none;
+    padding: 0;
+  }
+</style>

@@ -1,0 +1,545 @@
+/*
+ * Strona nie ładuje żadnych plików fontów: nagłówki i przyciski składa bezszeryfowy
+ * font systemu, tekst szeryfowy. Tekst jest widoczny od pierwszej klatki i nic nie przeskakuje.
+ */
+
+/* ---------- Tokeny ---------- */
+:root {
+  /* Bez trybu ciemnego: strona wygląda tak samo przy każdym ustawieniu systemu. */
+  color-scheme: only light;
+
+  /* Kolory: jasnoszare tło strony, ciepły krem, czerń i jeden akcent – ciepły żółty. */
+  --c-bg: #f7f7f7;
+  --c-card: #ffffff; /* biała karta w pasie kontaktu */
+  --c-cream: #f9f8f4;
+  --c-text: #111111;
+  --c-muted: #5e5b52;
+  --c-link-line: #e2ddca;
+  --c-link-line-hover: #bfb8a0; /* podkreślenie linku po najechaniu: lekko ciemniejsze */
+  --c-accent: #fbcf2b;
+  --c-accent-hover: #fce075;
+  --c-on-accent: #320101;
+  --c-focus: #111111;
+  --c-footer-bg: #000000;
+  --c-footer-text: #999999;
+  --c-footer-line: #444444;
+  --c-footer-strong: #ffffff;
+  --c-todo-bg: #fff4c2;
+  --c-todo-text: #5c4400;
+
+  /* Typografia */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: ui-serif, "New York", "Iowan Old Style", Georgia, "Times New Roman", serif;
+
+  /*
+   * ---------- Geometria 8 / 32 px ----------
+   * Jedno źródło wymiarów. Moduł bazowy 8 px porządkuje wnętrza, moduł nadrzędny 32 px
+   * główne bloki. Wartości w rem: przy standardowych 16 px dają nominalne piksele,
+   * a po zmianie rozmiaru tekstu w przeglądarce siatka i układ skalują się razem.
+   */
+  --unit: 0.5rem; /* 8 px */
+  --module: 2rem; /* 32 px */
+
+  /*
+   * Odstępy: numer = liczba modułów bazowych. W pionie używamy tylko 32 px i wielokrotności
+   * (--s-4, --s-8, ...), żeby wiersze tekstu nie schodziły z linii siatki. Mniejsze wartości
+   * służą odstępom poziomym i dopełnieniom symetrycznym, które sumują się do 32 px.
+   */
+  --s-1: 0.5rem; /* 8 */
+  --s-2: 1rem; /* 16 */
+  --s-3: 1.5rem; /* 24 */
+  --s-4: 2rem; /* 32 */
+  --s-6: 3rem; /* 48 */
+  --s-8: 4rem; /* 64 */
+
+  /*
+   * Pary rozmiar / interlinia. Każda interlinia to 32 px albo 64 px, czyli cały wiersz
+   * tekstu wypełnia jedną lub dwie kratki widocznej siatki. Rozmiar pisma jest dobrany
+   * do interlinii. Na progach szerokości pary zmieniają się skokowo (niżej).
+   * Odstępy liter w em, żeby skalowały się z rozmiarem.
+   */
+  --fs-display: 3rem; /* 48 / 64: imię i nazwisko w hero, w kolumnie tekstu */
+  --lh-display: 4rem;
+  --ls-display: -0.0332em;
+  --fs-display-2: 3rem; /* 48 / 64: liczby */
+  --lh-display-2: 4rem;
+  --ls-display-2: -0.0347em;
+  --fs-h2: 1.75rem; /* 28 / 32: nagłówek sekcji */
+  --lh-h2: 2rem;
+  --ls-h2: -0.03125em;
+  --fs-h3: 1.5rem; /* 24 / 32 */
+  --lh-h3: 2rem;
+  --ls-h3: -0.024em;
+  --fs-h4: 1.25rem; /* 20 / 32: tytuł pozycji */
+  --lh-h4: 2rem;
+  --ls-h4: -0.0114em;
+  --fs-body: 1.25rem; /* 20 / 32: tekst i akapit wstępu */
+  --lh-body: 2rem;
+  --fs-ui: 1rem; /* 16 / 32: przyciski, etykiety */
+  --fw-ui: 600;
+  --lh-ui: 2rem;
+  --fs-caption: 1rem; /* 16 / 32: podpisy, stopka */
+  --lh-caption: 2rem;
+  --fs-brand: 0.6875rem; /* 11 / 64: nazwisko w nagłówku (wersaliki) */
+  --lh-brand: 4rem;
+  --ls-brand: 0.145em;
+  --fw-brand: 600;
+  --fs-button: 0.875rem; /* 14 / 32: przycisk nagłówka w jednej kolumnie */
+  --fs-button-narrow: 0.8125rem; /* 13 / 32: tylko kontener 288 px */
+  --brand-line: 2px; /* linia pod nazwiskiem po najechaniu */
+
+  /*
+   * Kontener i kolumny. Szerokość kontenera W spełnia jednocześnie
+   * W = 2C + G i W = 3C + 2G dla G = 32 px, więc W/32 jest nieparzyste i daje resztę 2
+   * z dzielenia przez 3: 736, 928, 1120 px. Poniżej 768 px jedna kolumna (wartość --w
+   * ustawia .page). Progi są w zapytaniach @container page na końcu tej sekcji pliku.
+   */
+  --w-max-single: 34rem; /* 544 px: najszersza pojedyncza kolumna */
+  --edge: 1rem; /* minimalny margines od krawędzi ekranu na telefonie */
+  --gutter: 2rem; /* 32 px między głównymi blokami */
+  --gutter-wide: 6rem; /* szerszy odstęp między kolumnami tekstu */
+  --section-pad: 4rem; /* dopełnienie sekcji w pionie */
+  --header-h: 4rem; /* 64 px: przycisk wypełnia całą wysokość */
+  --w-media: 30rem; /* najszersza ramka zdjęcia poza hero */
+  --w-portrait: 24rem; /* 384 px: kwadratowy portret w hero */
+  --w-quote: 48rem; /* 768 px: szerokość cytatu */
+  --card-pad: 2rem;
+  --check-size: 1.5rem; /* żółty znacznik przy liście w hero */
+  --control: 4rem; /* 64 px: wysokość przycisku (dwie kratki) */
+
+  /* Widoczna siatka w tle: ledwo widoczny błękit, jak kratka w zeszycie. */
+  --grid-line: rgb(70 130 220 / 0.1);
+  --grid-debug-8: rgb(255 0 80 / 0.07);
+  --grid-debug-32: rgb(255 0 80 / 0.3);
+  --grid-debug-axis: rgb(0 110 255 / 0.8);
+
+  --link-line: 2px; /* grubość podkreślenia linku */
+  --focus-ring: 3px solid var(--c-focus);
+  --focus-offset: 3px;
+  --lift: -3px;
+}
+
+/* ---------- Reset i podstawy ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* Tło na html: body jest kontenerem zapytań, a wtedy jego tło nie przechodzi na okno. */
+  background: var(--c-bg);
+}
+
+/*
+ * body jest kontenerem zapytań: progi układu liczą się od rzeczywistej szerokości
+ * obszaru treści (bez paska przewijania), a nie od 100vw.
+ */
+body {
+  container: page / inline-size;
+  margin: 0;
+  color: var(--c-text);
+  font-family: var(--font-serif);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  /* Długie słowo lub adres łamie się zamiast wychodzić poza kolumnę. */
+  overflow-wrap: break-word;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-h2);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  letter-spacing: var(--ls-h3);
+}
+
+p,
+figure,
+dl,
+dd,
+ul,
+blockquote {
+  margin: 0;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/*
+ * Wyróżnienie w tekście: pogrubiony font nagłówków.
+ * Interlinia 1, żeby inny krój w wierszu nie rozpychał jego wysokości poza rytm 8 px.
+ */
+strong {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+/*
+ * Link w tekście: kolor tekstu i zwykłe podkreślenie pisma (bez obramowań i cieni),
+ * po najechaniu samo podkreślenie płynnie ciemnieje (bez tła pod słowem).
+ */
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--c-link-line);
+  text-decoration-thickness: var(--link-line);
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.3s;
+}
+
+a:hover {
+  text-decoration-color: var(--c-link-line-hover);
+}
+
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* Link „przejdź do treści” dla klawiatury i czytników ekranu (poza przepływem dokumentu). */
+.skip-link {
+  position: absolute;
+  left: var(--s-2);
+  top: -100px;
+  padding: 0 var(--s-2);
+  text-decoration: none;
+  background: var(--c-text);
+  color: var(--c-bg);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-ui);
+  font-size: var(--fs-ui);
+  line-height: var(--lh-ui);
+  z-index: 10;
+}
+
+.skip-link:focus {
+  top: var(--s-1);
+}
+
+/* ---------- Strona, kontener i widoczna siatka ---------- */
+
+/*
+ * .page obejmuje cały dokument i wyznacza początek współrzędnych: Y = góra strony
+ * (razem z nagłówkiem), X = lewa krawędź kontenera treści.
+ * Jedna kolumna: największa wielokrotność 32 px, która zostawia marginesy min. 16 px
+ * (i bezpieczne obszary urządzenia), nie więcej niż 544 px.
+ */
+.page {
+  position: relative;
+  --w: 18rem;
+  --col-2: var(--w);
+  --col-3: var(--w);
+  --col-wide: var(--w);
+}
+
+@supports (width: round(down, 1px, 1px)) {
+  .page {
+    --w: min(
+      var(--w-max-single),
+      round(
+        down,
+        100cqi - 2 * max(var(--edge), env(safe-area-inset-left), env(safe-area-inset-right)),
+        var(--module)
+      )
+    );
+  }
+}
+
+/*
+ * Siatka 32 px: przewija się z dokumentem, jej faza w osi X to lewa krawędź kontenera.
+ * Leży nad tłami sekcji i pod treścią (.container), nie łapie kliknięć i jako
+ * pseudoelement nie trafia do drzewa dostępności.
+ */
+.page::before,
+.page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-position: calc((100cqi - var(--w)) / 2) 0;
+}
+
+.page::before {
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: var(--module) var(--module);
+}
+
+.page::after {
+  display: none;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: var(--w);
+  margin-inline: auto;
+}
+
+/* Progi: szerokość kontenera + marginesy (2 × 16 px, od 992 px 2 × 32 px). */
+@container page (min-width: 48rem) {
+  .page {
+    --section-pad: 6rem;
+    --header-h: 8rem; /* 128 px: przycisk 64 px z kratką odstępu nad i pod */
+    --fs-display-2: 2rem; /* 32 / 32: trzy liczby obok siebie w kolumnach 224 px */
+    --lh-display-2: 2rem;
+    --fs-brand: 1rem; /* 16 / 64 */
+    --fs-button: var(--fs-ui);
+
+    --w: 46rem; /* 736 */
+    --col-2: 22rem; /* 352 */
+    --col-3: 14rem; /* 224 */
+    --col-wide: 20rem; /* 320, odstęp 96 */
+  }
+}
+
+@container page (min-width: 62rem) {
+  .page {
+    --fs-display-2: 3rem; /* 48 / 64 */
+    --lh-display-2: 4rem;
+    --fs-h2: 3rem; /* 48 / 64 */
+    --lh-h2: 4rem;
+
+    --w: 58rem; /* 928 */
+    --col-2: 28rem; /* 448 */
+    --col-3: 18rem; /* 288 */
+    --col-wide: 26rem; /* 416, odstęp 96 */
+  }
+}
+
+@container page (min-width: 74rem) {
+  .page {
+    --section-pad: 8rem;
+    --gutter-wide: 10rem;
+    --card-pad: 4rem;
+    --fs-display: 3.5rem; /* 56 / 64: nazwisko w jednym wierszu kolumny 544 px */
+
+    --w: 70rem; /* 1120 */
+    --col-2: 34rem; /* 544 */
+    --col-3: 22rem; /* 352 */
+    --col-wide: 30rem; /* 480, odstęp 160 */
+  }
+}
+
+/* ---------- Wspólne klasy układu ---------- */
+
+/*
+ * Zaokrąglenie wysokości bloku w górę do 32 px. Skrypt w Base.astro mierzy blok
+ * i wpisuje brakującą resztę do --snap; dodatkowe miejsce trafia zawsze na koniec.
+ * Bez skryptu reszta wynosi 0 i treść pozostaje w całości dostępna.
+ */
+[data-snap] {
+  margin-bottom: var(--snap, 0px);
+}
+
+/*
+ * Sekcje (.row) i kolumny nie mają linii podziału, obramowań ani cieni: jedyne linie
+ * na stronie to widoczna siatka, a sekcje rozdziela odstęp.
+ */
+
+/* Dwie równe kolumny tekstu; w jednej kolumnie strony jedna pod drugą. */
+.split {
+  display: grid;
+  grid-template-columns: var(--w);
+}
+
+.col {
+  padding-block: var(--section-pad) 0;
+  min-width: 0;
+}
+
+.col:last-child {
+  padding-bottom: var(--section-pad);
+}
+
+.prose > * + * {
+  margin-top: var(--s-4);
+}
+
+/*
+ * Nadtytuł w stylu nazwiska z nagłówka strony: wersaliki, rozstrzelone litery, wiersz 32 px.
+ * Używany nad imieniem w hero i jako nagłówek pasa logotypów.
+ */
+.eyebrow {
+  color: var(--c-muted);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-brand);
+  font-size: var(--fs-ui);
+  line-height: var(--lh-ui);
+  letter-spacing: var(--ls-brand);
+  text-transform: uppercase;
+}
+
+.section-heading {
+  padding-bottom: var(--s-4);
+}
+
+/* Ramka zdjęcia: wymiary z siatki 32 px, obraz kadrowany do ramki. */
+.media {
+  overflow: hidden;
+  width: min(var(--w-media), 100%);
+}
+
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@container page (min-width: 48rem) {
+  .split {
+    grid-template-columns: repeat(2, var(--col-wide));
+    column-gap: var(--gutter-wide);
+    align-items: start;
+  }
+
+  .col {
+    padding-block: var(--section-pad);
+  }
+}
+
+/* ---------- Przyciski ---------- */
+
+/*
+ * Wysokość 64 px: wiersz 32 px i po 16 px dopełnienia. Szerokość zależy od etykiety, więc skrypt zaokrągla ją
+ * w górę do 8 px (--snap-w). Etykieta jest w <span>, bo to ją mierzymy. Wynik trafia do
+ * min-width, więc nie ogranicza etykiety i kolejny pomiar znów daje jej naturalną szerokość.
+ */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: min(var(--snap-w, 0px), 100%);
+  max-width: 100%;
+  min-height: var(--control);
+  padding: var(--s-2) var(--s-3);
+  text-decoration: none;
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-ui);
+  font-size: var(--fs-ui);
+  line-height: var(--lh-ui);
+  text-align: center;
+  vertical-align: top;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
+}
+
+.button:hover {
+  background: var(--c-accent-hover);
+  transform: translateY(var(--lift));
+}
+
+.button-large {
+  padding-inline: var(--s-6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  a,
+  .button {
+    transition: none;
+  }
+
+  .button:hover {
+    transform: none;
+  }
+}
+
+/* ---------- Placeholder treści (widoczny tylko przed uzupełnieniem) ---------- */
+.todo {
+  background: var(--c-todo-bg);
+  color: var(--c-todo-text);
+  padding: 0 0.25em;
+  font-family: var(--font-sans);
+  font-size: 0.75em;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+}
+
+/*
+ * Słowo, które trzyma się razem: przechodzi do nowego wiersza w całości, a łamie się
+ * dopiero wtedy, gdy samo jest szersze niż kolumna (np. przy mocno powiększonym tekście).
+ */
+.nowrap {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: top;
+}
+
+/*
+ * ---------- Tryb diagnostyczny siatki ----------
+ * Domyślnie wyłączony. Włącza go adres z kotwicą #siatka (np. /#siatka): nad stroną
+ * pojawia się siatka 8 i 32 px, osie kontenera i obrysy elementów kontrolowanych.
+ * Niebieski obrys = blok z siatki 32 px, różowy = wnętrze z siatki 8 px.
+ */
+html:has(#siatka:target) .page::after {
+  display: block;
+  z-index: 20;
+  background-image:
+    linear-gradient(to right, var(--grid-debug-32) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-debug-32) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-debug-8) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-debug-8) 1px, transparent 1px);
+  background-size:
+    var(--module) var(--module),
+    var(--module) var(--module),
+    var(--unit) var(--unit),
+    var(--unit) var(--unit);
+}
+
+html:has(#siatka:target) .container {
+  outline: 1px solid var(--grid-debug-axis);
+}
+
+html:has(#siatka:target) [data-grid^="32"] {
+  outline: 1px dashed var(--grid-debug-axis);
+  outline-offset: -1px;
+}
+
+html:has(#siatka:target) [data-grid^="8"] {
+  outline: 1px dashed var(--grid-debug-32);
+  outline-offset: -1px;
+}

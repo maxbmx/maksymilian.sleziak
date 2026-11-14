@@ -1,0 +1,19 @@
+---
+/**
+ * Wyświetla tekst z content.ts. Jeśli to placeholder (todo), oznacza go na żółto,
+ * żeby był widoczny w wersji roboczej. Słowo „e-commerce” nie łamie się na myślniku.
+ */
+import { isTodo } from "../content";
+
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+const parts = text.split(/(e-commerce)/);
+---
+
+{isTodo(text) ? (
+  <span class="todo">{text}</span>
+) : (
+  parts.map((part) => (part === "e-commerce" ? <span class="nowrap">{part}</span> : part))
+)}

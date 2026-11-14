@@ -1,0 +1,30 @@
+name: Smoke test produkcji
+
+# Po każdym udanym deployu produkcyjnym sprawdza działającą stronę
+# (status 200, h1, JSON-LD, brak noindex, przekierowanie na https, nagłówki).
+on:
+  # Cloudflare Pages zgłasza deploy do GitHuba jako "deployment".
+  deployment_status:
+  schedule:
+    - cron: "30 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    name: Smoke test
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Smoke test na adresie produkcyjnym
+        run: npm run test:smoke

@@ -1,0 +1,19 @@
+---
+/**
+ * Przycisk-link. Etykieta jest w <span>: skrypt mierzy ją i zaokrągla szerokość
+ * przycisku w górę do 8 px (data-snap-w). Pozostałe atrybuty, w tym klasa i znacznik
+ * stylów rodzica, przechodzą na <a>.
+ */
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"a"> {
+  large?: boolean;
+}
+const { large = false, class: className, ...rest } = Astro.props;
+---
+
+<a class:list={["button", large && "button-large", className]} data-snap-w data-grid="8" {...rest}>
+  <span>
+    <slot />
+  </span>
+</a>

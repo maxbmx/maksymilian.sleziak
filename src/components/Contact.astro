@@ -1,0 +1,135 @@
+---
+import { company, contact, contactSection, testimonials } from "../content";
+import { contactLinks } from "../lib/links";
+import Button from "./Button.astro";
+import Quote from "./Quote.astro";
+import T from "./T.astro";
+
+const { labels } = contactSection;
+// Przycisk prowadzi do kalendarza, a dopóki go nie ma – do poczty.
+const ctaHref = contactLinks.calendar ?? contactLinks.email;
+---
+
+<section id="kontakt" class="contact" aria-labelledby="contact-heading" data-grid="32y">
+  <div class="container contact-grid">
+    <div class="contact-intro" data-snap data-grid="32">
+      <h2 id="contact-heading" class="contact-heading">
+        {contactSection.heading}
+      </h2>
+      {contactSection.lead && <p class="contact-lead">{contactSection.lead}</p>}
+      {testimonials.featured && <Quote {...testimonials.featured} size="small" />}
+    </div>
+
+    <div class="card" data-snap data-grid="32">
+      <dl class="channels">
+        <div>
+          <dt>{labels.email}</dt>
+          <dd>
+            {contactLinks.email ? (
+              <a href={contactLinks.email}>{contact.email}</a>
+            ) : (
+              <T text={contact.email} />
+            )}
+          </dd>
+        </div>
+        <div>
+          <dt>{labels.linkedin}</dt>
+          <dd>
+            {contactLinks.linkedin ? (
+              <a href={contactLinks.linkedin} rel="me">
+                {labels.linkedinLink}
+              </a>
+            ) : (
+              <T text={contact.linkedin} />
+            )}
+          </dd>
+        </div>
+        <div>
+          <dt>{labels.company}</dt>
+          <dd>
+            <a href={company.url}>{company.urlLabel}</a>
+          </dd>
+        </div>
+      </dl>
+
+      <p class="contact-cta">
+        {ctaHref ? (
+          <Button large href={ctaHref}>
+            {contactSection.cta}
+          </Button>
+        ) : (
+          <T text={contact.calendarUrl} />
+        )}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Kremowy pas: po lewej nagłówek, po prawej biała karta z danymi i przyciskiem. */
+  .contact {
+    background: var(--c-cream);
+    padding-block: var(--section-pad);
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: var(--w);
+    row-gap: var(--s-4);
+    align-items: start;
+  }
+
+  .contact-lead,
+  .contact-intro > :global(.quote) {
+    margin-top: var(--s-4);
+  }
+
+  .card {
+    width: min(var(--w-media), 100%);
+    padding: var(--card-pad);
+    background: var(--c-card);
+  }
+
+  .channels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+  }
+
+  dt {
+    font-family: var(--font-sans);
+    font-weight: var(--fw-ui);
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+  }
+
+  dd {
+    overflow-wrap: anywhere;
+  }
+
+  /*
+   * Obszar kliknięcia 48 px bez zmiany układu: dopełnienie zniesione ujemnym marginesem.
+   * Wiersz ma wysokość 32 px dzięki vertical-align (bez dopasowania do linii pisma).
+   */
+  dd a {
+    display: inline-block;
+    padding-block: var(--s-1);
+    margin-block: calc(var(--s-1) * -1);
+    vertical-align: top;
+  }
+
+  .contact-cta {
+    margin-top: var(--s-4);
+  }
+
+  .contact-cta :global(.button) {
+    width: 100%;
+  }
+
+  @container page (min-width: 62rem) {
+    .contact-grid {
+      grid-template-columns: repeat(2, var(--col-wide));
+      column-gap: var(--gutter-wide);
+    }
+  }
+</style>

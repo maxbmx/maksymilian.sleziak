@@ -1,0 +1,93 @@
+---
+import { ai } from "../content";
+---
+
+<section class="row" aria-labelledby="ai-heading" data-grid="32y">
+  <div class="container split">
+    <div class="col prose" data-snap data-grid="32">
+      <h2 id="ai-heading" class="section-heading">
+        {ai.heading}
+      </h2>
+      <p>{ai.intro}</p>
+      <p>
+        <strong>{ai.roleLabel}</strong> {ai.role}
+      </p>
+      <p>{ai.advantage}</p>
+    </div>
+    <div class="col" data-snap data-grid="32">
+      <h3>{ai.areasHeading}</h3>
+      <dl class="areas">
+        {ai.areas.map((area) => (
+          <div class="area">
+            <dt>{area.title}</dt>
+            <dd>{area.text}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+
+  {ai.caseStudy && (
+    <div class="container case-wrap">
+      <article class="case" aria-labelledby="case-heading" data-snap data-grid="32">
+        <h3 id="case-heading">
+          {ai.caseStudyLabels.heading} {ai.caseStudy.client}
+        </h3>
+        <dl>
+          <dt>{ai.caseStudyLabels.problem}</dt>
+          <dd>{ai.caseStudy.problem}</dd>
+          <dt>{ai.caseStudyLabels.solution}</dt>
+          <dd>{ai.caseStudy.solution}</dd>
+          <dt>{ai.caseStudyLabels.result}</dt>
+          <dd>{ai.caseStudy.result}</dd>
+        </dl>
+      </article>
+    </div>
+  )}
+</section>
+
+<style>
+  .prose > .section-heading + * {
+    margin-top: 0;
+  }
+
+  .areas {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    margin-top: var(--s-4);
+  }
+
+  .area dt {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h4);
+    line-height: var(--lh-h4);
+    letter-spacing: var(--ls-h4);
+  }
+
+  /* Blok przykładu kończy się na linii 32 px; odstęp sekcji jest pod nim, w kontenerze. */
+  .case-wrap {
+    padding-bottom: var(--section-pad);
+  }
+
+  .case {
+    padding: var(--card-pad);
+    background: var(--c-cream);
+  }
+
+  .case h3 {
+    padding-bottom: var(--s-4);
+  }
+
+  .case dt {
+    font-family: var(--font-sans);
+    font-weight: var(--fw-ui);
+    font-size: var(--fs-ui);
+    line-height: var(--lh-ui);
+  }
+
+  .case dd + dt {
+    margin-top: var(--s-4);
+  }
+</style>

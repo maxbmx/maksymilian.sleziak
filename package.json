@@ -1,0 +1,52 @@
+{
+  "name": "maksymilian-sleziak-com",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Strona osobista Maksymiliana Śleziaka – maksymilian.sleziak.com",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "build:prod": "astro build && node scripts/check-placeholders.mjs",
+    "preview": "astro preview --port 4321",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "npm run format:check && npm run lint:eslint && npm run check",
+    "test:html": "html-validate \"dist/**/*.html\"",
+    "test:links": "node scripts/check-links.mjs",
+    "test:csp": "node scripts/check-csp.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
+    "test": "npm run test:html && npm run test:links && npm run test:csp && npm run test:e2e",
+    "test:lighthouse": "node scripts/lighthouse.mjs",
+    "assets": "node scripts/make-brand-assets.mjs",
+    "build:cf": "node scripts/cf-build.mjs",
+    "test:links:external": "node scripts/check-links.mjs --external",
+    "lint:eslint": "eslint .",
+    "test:smoke": "playwright test --config playwright.smoke.config.ts"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "astro": "7.4.4",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@axe-core/playwright": "4.14.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "chrome-launcher": "^1.2.2",
+    "eslint": "10.14.0",
+    "eslint-plugin-astro": "3.2.1",
+    "html-validate": "11.17.0",
+    "lighthouse": "^13.6.0",
+    "prettier": "3.9.10",
+    "prettier-plugin-astro": "1.1.2",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1"
+  }
+}

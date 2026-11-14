@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+.lighthouse/
+.env
+.DS_Store
+
+# Narzędzia Claude: zostają lokalnie, poza repozytorium
+.claude/skills/
+.agents/

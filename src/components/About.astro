@@ -1,0 +1,17 @@
+---
+import { about, company } from "../content";
+---
+
+<section class="col" aria-labelledby="about-heading" data-snap data-grid="32">
+  <h2 id="about-heading" class="section-heading">
+    {about.heading}
+  </h2>
+  <div class="prose">
+    {about.paragraphs.map((p) => (
+      <p>{p}</p>
+    ))}
+    <p>
+      {about.companyLinkLabel} <a href={company.url}>{company.urlLabel}</a>
+    </p>
+  </div>
+</section>

@@ -1,0 +1,31 @@
+---
+import { testimonials } from "../content";
+import Quote from "./Quote.astro";
+---
+
+{testimonials.items.length > 0 && (
+  <section class="row" aria-labelledby="testimonials-heading" data-grid="32y">
+    <div class="container testimonials">
+      <h2 id="testimonials-heading" class="section-heading">
+        {testimonials.heading}
+      </h2>
+      <div class="list" data-snap data-grid="32">
+        {testimonials.items.map((t) => (
+          <Quote {...t} />
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .testimonials {
+    padding-block: var(--section-pad);
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-8);
+  }
+</style>

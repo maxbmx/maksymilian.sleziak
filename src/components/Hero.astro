@@ -1,0 +1,171 @@
+---
+import { Picture } from "astro:assets";
+import { hero, images, person } from "../content";
+import { getImage } from "../lib/images";
+import { PORTRAIT_SIZES, PORTRAIT_WIDTHS } from "../lib/portrait";
+import { contactLinks } from "../lib/links";
+import Button from "./Button.astro";
+import T from "./T.astro";
+---
+
+<section class="hero" aria-labelledby="hero-heading" data-grid="32y">
+  <div class="container hero-grid">
+    <div class="hero-text" data-snap data-grid="32">
+      <h1 id="hero-heading" class="hero-title">
+        <span class="eyebrow">{hero.eyebrow}</span> <span class="hero-name">{person.name}</span>
+      </h1>
+      <p class="intro">
+        <T text={hero.lead} /> <T text={hero.specialties} />
+      </p>
+      <ul class="highlights" role="list">
+        {hero.highlights.map((item) => (
+          <li>
+            <svg class="check" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="12" />
+              <path d="M7.5 12.5l3 3 6-6.5" />
+            </svg>
+            <span>
+              <T text={item} />
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p class="hero-action">
+        <Button large href={contactLinks.calendar ?? "#kontakt"}>
+          {hero.cta}
+        </Button>
+      </p>
+      <p class="proof">{hero.proof}</p>
+    </div>
+
+    <figure class="hero-portrait media" data-grid="32">
+      <Picture
+        src={getImage(images.portrait)}
+        alt={hero.portraitAlt}
+        widths={PORTRAIT_WIDTHS}
+        sizes={PORTRAIT_SIZES}
+        formats={["avif", "webp"]}
+        fallbackFormat="jpg"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </figure>
+  </div>
+</section>
+
+<style>
+  /*
+   * Po lewej kolumna z nagłówkiem, tekstem i listą, po prawej portret; oba zaczynają się
+   * na tej samej linii. W jednej kolumnie wszystko jedno pod drugim, portret na końcu.
+   * Nagłówek to nadtytuł (32 px) i nazwisko (wiersze po 64 px), więc zawsze zajmuje pełne kratki.
+   */
+  .hero {
+    padding-block: var(--s-4) var(--section-pad);
+    background: var(--c-cream);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: var(--w);
+    row-gap: var(--s-4);
+  }
+
+  /*
+   * Nadtytuł (.eyebrow z global.css) w jednym wierszu 32 px, pod nim imię i nazwisko
+   * w wierszach po 64 px. Całość to jeden <h1>.
+   */
+  .eyebrow,
+  .hero-name {
+    display: block;
+  }
+
+  .intro {
+    margin-top: var(--s-4);
+  }
+
+  .highlights {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--s-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .highlights li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-2);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-h4);
+    line-height: var(--lh-h4);
+    letter-spacing: var(--ls-h4);
+  }
+
+  .highlights span {
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+
+  /*
+   * Żółte kółko ze znacznikiem: 24 px na środku kratki 32 × 32 px (po 4 px z każdej strony).
+   * Tekst zaczyna się pół kratki (16 px) za tą kratką.
+   */
+  .check {
+    flex: none;
+    margin: calc((var(--module) - var(--check-size)) / 2);
+    width: var(--check-size);
+    height: var(--check-size);
+  }
+
+  .check circle {
+    fill: var(--c-accent);
+  }
+
+  .check path {
+    fill: none;
+    stroke: var(--c-on-accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .hero-action {
+    margin-top: var(--s-4);
+  }
+
+  .proof {
+    margin-top: var(--s-4);
+    font-size: var(--fs-caption);
+    line-height: var(--lh-caption);
+    font-style: italic;
+  }
+
+  /* Kwadratowa ramka: szerokość kolumny, najwyżej 384 px. */
+  .hero-portrait {
+    width: min(var(--w-portrait), var(--col-2));
+    height: min(var(--w-portrait), var(--col-2));
+  }
+
+  @container page (min-width: 48rem) {
+    .hero {
+      padding-top: var(--s-8);
+    }
+
+    .hero-grid {
+      grid-template-columns: repeat(2, var(--col-2));
+      grid-template-areas: "text photo";
+      column-gap: var(--gutter);
+      align-items: start;
+    }
+
+    .hero-text {
+      grid-area: text;
+    }
+
+    .hero-portrait {
+      grid-area: photo;
+      justify-self: end;
+    }
+  }
+</style>

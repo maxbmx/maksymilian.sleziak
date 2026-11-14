@@ -1,0 +1,85 @@
+---
+import "../styles/global.css";
+import { person, site } from "../content";
+import { buildSchema } from "../lib/schema";
+import snapScript from "../scripts/snap.js?raw";
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindexOverride?: boolean;
+}
+
+const { title = site.title, description = site.description, noindexOverride } = Astro.props;
+
+// Wersje preview (gałęzie inne niż main na Cloudflare Pages) nie mogą trafić do Google.
+const branch = process.env.CF_PAGES_BRANCH;
+const noindex = noindexOverride ?? (Boolean(branch) && branch !== "main");
+
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL(site.ogImage, site.url).href;
+const schema = buildSchema(ogImage);
+// Skrypt trafia do strony bez komentarza nagłówkowego (mniej bajtów, stały hash w CSP).
+const snap = snapScript.replace(/\/\*[\s\S]*?\*\//, "").trim();
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    <meta
+      name="robots"
+      content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"}
+    />
+    <meta name="author" content={person.name} />
+
+    <meta name="theme-color" content={site.themeColor} />
+    <meta name="color-scheme" content="only light" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Zasoby strony do wstępnego pobrania (np. portret w hero). -->
+    <slot name="head" />
+
+    <meta property="og:type" content="profile" />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={site.ogImageAlt} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:site_name" content={person.name} />
+    <meta property="profile:first_name" content={person.firstName} />
+    <meta property="profile:last_name" content={person.lastName} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+  <body>
+    <div class="page">
+      <a class="skip-link" href="#tresc">
+        {site.skipLink}
+      </a>
+      <slot />
+      <!-- Cel kotwicy #siatka: włącza tryb diagnostyczny siatki (opis w global.css). -->
+      <span id="siatka" hidden></span>
+    </div>
+    <!--
+      Jedyny skrypt strony: dopasowuje wysokości bloków do siatki 32 px. Wstawiony w treść
+      (bez osobnego pliku); jego hash jest w public/_headers, pilnuje tego scripts/check-csp.mjs.
+    -->
+    <script is:inline set:html={snap} />
+  </body>
+</html>

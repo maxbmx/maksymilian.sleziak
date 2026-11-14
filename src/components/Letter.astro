@@ -1,0 +1,80 @@
+---
+import { letter } from "../content";
+import Button from "./Button.astro";
+import T from "./T.astro";
+---
+
+<section class="row" aria-labelledby="letter-heading" data-grid="32y">
+  <div class="container">
+    <div class="col letter-body prose" data-snap data-grid="32">
+      <h2 id="letter-heading" class="section-heading">
+        {letter.heading}
+      </h2>
+      <div class="letter-columns">
+        {letter.paragraphs.map((p) => (
+          <p>
+            <T text={p} />
+          </p>
+        ))}
+      </div>
+      <p class="signature">
+        {letter.signature}
+        <span>{letter.signatureRole}</span>
+      </p>
+      <p class="letter-action">
+        <Button href="#kontakt">{letter.cta}</Button>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Nagłówek ma własny odstęp pod spodem, więc blok po nim nie dostaje drugiego. */
+  .letter-body > .section-heading + * {
+    margin-top: 0;
+  }
+
+  /*
+   * Tekst listu w jednej kolumnie na wąskich ekranach; od 48rem dzielony na dwie
+   * kolumny o szerokim odstępie. Akapity nie pękają między kolumnami.
+   */
+  .letter-columns > p + p {
+    margin-top: var(--s-4);
+  }
+
+  .letter-columns p {
+    break-inside: avoid;
+  }
+
+  @container page (min-width: 48rem) {
+    .letter-columns {
+      columns: 2;
+      column-gap: var(--gutter-wide);
+    }
+
+    /* Pierwszy akapit drugiej kolumny nie dostaje odstępu z góry. */
+    .letter-columns > p {
+      margin-top: 0;
+    }
+
+    .letter-columns > p:not(:first-child) {
+      margin-top: var(--s-4);
+    }
+  }
+
+  .signature {
+    font-style: italic;
+  }
+
+  .signature span {
+    display: block;
+    font-style: normal;
+    font-size: var(--fs-caption);
+    line-height: var(--lh-caption);
+    color: var(--c-muted);
+  }
+
+  .letter-body > .letter-action {
+    margin-top: var(--s-4);
+  }
+</style>

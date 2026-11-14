@@ -1,0 +1,50 @@
+---
+import { numbers } from "../content";
+---
+
+<section class="row" aria-label={numbers.label} data-grid="32y">
+  <dl class="container numbers">
+    {numbers.items.map((item) => (
+      <div class="number" data-snap data-grid="32">
+        <dt>{item.label}</dt>
+        <dd>{item.value}</dd>
+      </div>
+    ))}
+  </dl>
+</section>
+
+<style>
+  .numbers {
+    display: grid;
+    grid-template-columns: var(--w);
+    text-align: center;
+  }
+
+  .number {
+    display: flex;
+    flex-direction: column-reverse;
+    padding-block: var(--s-4);
+  }
+
+  dd {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--fs-display-2);
+    line-height: var(--lh-display-2);
+    letter-spacing: var(--ls-display-2);
+    overflow-wrap: break-word;
+  }
+
+  @container page (min-width: 48rem) {
+    .numbers {
+      grid-template-columns: repeat(3, var(--col-3));
+      column-gap: var(--gutter);
+      /* Bez rozciągania: każda liczba ma własną wysokość, więc wiersze trzymają jedną linię. */
+      align-items: start;
+    }
+
+    .number {
+      padding-block: var(--s-8);
+    }
+  }
+</style>
