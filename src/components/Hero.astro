@@ -3,7 +3,7 @@ import { Picture } from "astro:assets";
 import { hero, images, person } from "../content";
 import { getImage } from "../lib/images";
 import { PORTRAIT_SIZES, PORTRAIT_WIDTHS } from "../lib/portrait";
-import { contactLinks } from "../lib/links";
+import { calendarLink } from "../lib/links";
 import Button from "./Button.astro";
 import T from "./T.astro";
 ---
@@ -31,7 +31,7 @@ import T from "./T.astro";
         ))}
       </ul>
       <p class="hero-action">
-        <Button large href={contactLinks.calendar ?? "#kontakt"}>
+        <Button large href={calendarLink("hero") ?? "#kontakt"}>
           {hero.cta}
         </Button>
       </p>

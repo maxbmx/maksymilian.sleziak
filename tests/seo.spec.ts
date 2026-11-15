@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { company, person, site } from "../src/content";
+import { company, faq, person, site } from "../src/content";
 import { parseSchema } from "./helpers";
 
 const CANONICAL = `${site.url}/`;
@@ -115,6 +115,56 @@ test.describe("SEO i treść", () => {
   test("każdy obraz ma atrybut alt", async ({ page }) => {
     const missing = await page.locator("img:not([alt])").count();
     expect(missing).toBe(0);
+  });
+
+  test("pytania i odpowiedzi: treść z content.ts na stronie i w JSON-LD", async ({ page }) => {
+    await page.goto("/");
+    // Typografia wstawia twarde spacje, więc porównujemy tekst po ujednoliceniu odstępów.
+    const clean = (text: string) => text.replace(/\s+/g, " ").trim();
+    const items = page.locator("#pytania li");
+    await expect(items).toHaveCount(faq.items.length);
+    for (const [index, item] of faq.items.entries()) {
+      expect(clean(await items.nth(index).locator("h3").innerText())).toBe(item.question);
+      expect(clean(await items.nth(index).locator("p").innerText())).toBe(item.answer);
+    }
+
+    const raw = await page.locator('script[type="application/ld+json"]').textContent();
+    const graph: Array<{ "@type": string; mainEntity?: unknown }> = JSON.parse(raw ?? "")["@graph"];
+    const faqPage = graph.find((node) => node["@type"] === "FAQPage");
+    expect(faqPage?.mainEntity).toEqual(
+      faq.items.map((item) => ({
+        "@type": "Question",
+        name: clean(item.question),
+        acceptedAnswer: { "@type": "Answer", text: clean(item.answer) },
+      })),
+    );
+  });
+
+  test("llms.txt: opis strony dla modeli AI, zgodny z content.ts", async ({ request }) => {
+    const response = await request.get("/llms.txt");
+    expect(response.ok()).toBeTruthy();
+    expect(response.headers()["content-type"]).toContain("text/plain");
+    const text = await response.text();
+    expect(text.startsWith(`# ${person.name}\n\n> `)).toBeTruthy();
+    expect(text).toContain(person.alternateName);
+    expect(text).toContain(`${CANONICAL}`);
+    for (const item of faq.items) expect(text).toContain(`### ${item.question}`);
+    // Adresy do cytowania, bez oznaczeń kampanii.
+    expect(text).not.toContain("utm_");
+  });
+
+  test("robots.txt: jawne zgody dla robotów AI, bez blokad", async ({ request }) => {
+    const robots = await (await request.get("/robots.txt")).text();
+    for (const bot of [
+      "OAI-SearchBot",
+      "GPTBot",
+      "ClaudeBot",
+      "PerplexityBot",
+      "Google-Extended",
+    ]) {
+      expect(robots).toContain(`User-agent: ${bot}`);
+    }
+    expect(robots).not.toMatch(/^Disallow:/m);
   });
 
   test("pliki techniczne: robots, sitemap, favicon, 404", async ({ request }) => {

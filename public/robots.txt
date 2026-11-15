@@ -1,4 +1,24 @@
+# maksymilian.sleziak.com: cała strona jest publiczna i przeznaczona do indeksowania.
+
 User-agent: *
+Allow: /
+
+# Wyszukiwarki i asystenci AI: wyszukiwanie, cytowanie i pobieranie na prośbę użytkownika.
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Allow: /
+
+# Roboty zbierające dane do trenowania modeli. Dopuszczone celowo: strona ma być
+# znana modelom. Żeby to cofnąć, zamień w tej grupie "Allow: /" na "Disallow: /".
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
 Allow: /
 
 Sitemap: https://maksymilian.sleziak.com/sitemap-index.xml

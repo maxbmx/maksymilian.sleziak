@@ -1,4 +1,4 @@
-import { company, hero, person, site } from "../content";
+import { company, faq, hero, person, site } from "../content";
 import { contactLinks } from "./links";
 
 /** Dane strukturalne (JSON-LD): osoba i firma jako osobne byty z własnym @id. */
@@ -46,6 +46,22 @@ export function buildSchema(imageUrl: string) {
         url: company.url,
         founder: { "@id": personId },
       },
+      // Pytania i odpowiedzi widoczne na stronie. Bez pytań węzła nie ma.
+      ...(faq.items.length
+        ? [
+            {
+              "@type": "FAQPage",
+              "@id": `${site.url}/#faq`,
+              url: `${site.url}/#pytania`,
+              inLanguage: site.lang,
+              mainEntity: faq.items.map((item) => ({
+                "@type": "Question",
+                name: item.question,
+                acceptedAnswer: { "@type": "Answer", text: item.answer },
+              })),
+            },
+          ]
+        : []),
     ],
   };
 }

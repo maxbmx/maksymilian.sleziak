@@ -1,13 +1,13 @@
 ---
 import { company, contact, contactSection, testimonials } from "../content";
-import { contactLinks } from "../lib/links";
+import { calendarLink, companyLink, contactLinks } from "../lib/links";
 import Button from "./Button.astro";
 import Quote from "./Quote.astro";
 import T from "./T.astro";
 
 const { labels } = contactSection;
 // Przycisk prowadzi do kalendarza, a dopóki go nie ma – do poczty.
-const ctaHref = contactLinks.calendar ?? contactLinks.email;
+const ctaHref = calendarLink("kontakt-przycisk") ?? contactLinks.email;
 ---
 
 <section id="kontakt" class="contact" aria-labelledby="contact-heading" data-grid="32y">
@@ -47,7 +47,7 @@ const ctaHref = contactLinks.calendar ?? contactLinks.email;
         <div>
           <dt>{labels.company}</dt>
           <dd>
-            <a href={company.url}>{company.urlLabel}</a>
+            <a href={companyLink("kontakt")}>{company.urlLabel}</a>
           </dd>
         </div>
       </dl>

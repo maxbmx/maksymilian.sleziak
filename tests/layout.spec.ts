@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { contact } from "../src/content";
+import { company, contact, utm } from "../src/content";
 
 const widths = [360, 768, 1280, 1920];
 
@@ -49,10 +49,39 @@ test("imię i nazwisko widoczne od razu na telefonie (390×844)", async ({ page 
   await expect(page.locator("h1")).toBeInViewport({ ratio: 1 });
 });
 
-test("przyciski „Umówmy rozmowę” prowadzą pod adres z content.ts", async ({ page }) => {
+test("przyciski „Umówmy rozmowę” prowadzą pod adres z content.ts, z oznaczeniem UTM", async ({
+  page,
+}) => {
   await page.goto("/");
-  for (const selector of [".header-cta", ".hero .button", "#kontakt .button"]) {
-    await expect(page.locator(selector)).toHaveAttribute("href", contact.calendarUrl);
+  const placements = {
+    ".header-cta": "naglowek",
+    ".hero .button": "hero",
+    "#kontakt .button": "kontakt-przycisk",
+  };
+  for (const [selector, placement] of Object.entries(placements)) {
+    const href = await page.locator(selector).getAttribute("href");
+    const url = new URL(href ?? "");
+    expect(url.origin + url.pathname).toBe(contact.calendarUrl);
+    expect(Object.fromEntries(url.searchParams)).toEqual({
+      utm_source: utm.source,
+      utm_medium: utm.medium,
+      utm_campaign: utm.campaign,
+      utm_content: placement,
+    });
+  }
+});
+
+test("każdy link do strony firmy ma oznaczenie UTM", async ({ page }) => {
+  await page.goto("/");
+  const host = new URL(company.url).hostname;
+  const hrefs = await page
+    .locator(`a[href*="//${host}"]`)
+    .evaluateAll((links) => links.map((a) => a.getAttribute("href") ?? ""));
+  expect(hrefs.length).toBeGreaterThanOrEqual(6);
+  for (const href of hrefs) {
+    const params = new URL(href).searchParams;
+    expect(params.get("utm_source"), href).toBe(utm.source);
+    expect(params.get("utm_content"), href).toBeTruthy();
   }
 });
 

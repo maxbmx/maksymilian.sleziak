@@ -1,5 +1,6 @@
 ---
 import { company, person } from "../content";
+import { companyLink } from "../lib/links";
 const year = new Date().getFullYear();
 ---
 
@@ -7,8 +8,8 @@ const year = new Date().getFullYear();
   <div class="container" data-snap data-grid="32">
     <p class="footer-name">{person.name}</p>
     <p>
-      {`© ${year} ${person.name}, ${person.role}`} <a href={company.url}>{company.name}</a>,{" "}
-      {person.city}
+      {`© ${year} ${person.name}, ${person.role}`}{" "}
+      <a href={companyLink("stopka")}>{company.name}</a>, {person.city}
     </p>
   </div>
 </footer>

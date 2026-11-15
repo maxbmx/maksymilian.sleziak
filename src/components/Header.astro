@@ -1,6 +1,6 @@
 ---
 import { header, person } from "../content";
-import { contactLinks } from "../lib/links";
+import { calendarLink } from "../lib/links";
 import Button from "./Button.astro";
 ---
 
@@ -9,7 +9,7 @@ import Button from "./Button.astro";
     <a class="site-name" href="/">
       {person.name}
     </a>
-    <Button class="header-cta" href={contactLinks.calendar ?? "#kontakt"}>
+    <Button class="header-cta" href={calendarLink("naglowek") ?? "#kontakt"}>
       {header.cta}
     </Button>
   </div>

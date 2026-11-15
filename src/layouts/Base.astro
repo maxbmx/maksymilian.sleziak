@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { person, site } from "../content";
+import { analytics, person, site } from "../content";
 import { buildSchema } from "../lib/schema";
 import snapScript from "../scripts/snap.js?raw";
 
@@ -15,6 +15,12 @@ const { title = site.title, description = site.description, noindexOverride } = 
 // Wersje preview (gałęzie inne niż main w Cloudflare Workers Builds) nie mogą trafić do Google.
 const branch = process.env.WORKERS_CI_BRANCH;
 const noindex = noindexOverride ?? (Boolean(branch) && branch !== "main");
+
+// Analityka tylko na produkcji (build gałęzi main w Cloudflare) i tylko z uzupełnionym tokenem.
+const beacon =
+  branch === "main" && analytics.cloudflareToken
+    ? JSON.stringify({ token: analytics.cloudflareToken })
+    : null;
 
 const canonical = new URL(Astro.url.pathname, site.url).href;
 const ogImage = new URL(site.ogImage, site.url).href;
@@ -77,9 +83,21 @@ const snap = snapScript.replace(/\/\*[\s\S]*?\*\//, "").trim();
       <span id="siatka" hidden></span>
     </div>
     <!--
-      Jedyny skrypt strony: dopasowuje wysokości bloków do siatki 32 px. Wstawiony w treść
+      Jedyny własny skrypt strony: dopasowuje wysokości bloków do siatki 32 px. Wstawiony w treść
       (bez osobnego pliku); jego hash jest w public/_headers, pilnuje tego scripts/check-csp.mjs.
     -->
     <script is:inline set:html={snap} />
+    <!--
+      Cloudflare Web Analytics (bez cookies), tylko na produkcji. Adresy skryptu i zapytań
+      są dopuszczone w CSP w public/_headers (script-src i connect-src).
+    -->
+    {beacon && (
+      <script
+        is:inline
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={beacon}
+      />
+    )}
   </body>
 </html>

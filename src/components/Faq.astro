@@ -1,0 +1,49 @@
+---
+import { faq } from "../content";
+import T from "./T.astro";
+---
+
+{faq.items.length > 0 && (
+  <section id="pytania" class="row" aria-labelledby="faq-heading" data-grid="32y">
+    <div class="container">
+      <div class="col" data-snap data-grid="32">
+        <h2 id="faq-heading" class="section-heading">
+          {faq.heading}
+        </h2>
+        <ul class="faq" role="list">
+          {faq.items.map((item) => (
+            <li>
+              <h3>
+                <T text={item.question} />
+              </h3>
+              <p>
+                <T text={item.answer} />
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  /*
+   * Pytania jedno pod drugim; od 48rem w dwóch kolumnach o szerokim odstępie.
+   * Każda pozycja ma wysokość z siatki 32 px, więc wiersze obu kolumn trzymają linię.
+   */
+  .faq {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--s-4);
+    list-style: none;
+    padding: 0;
+  }
+
+  @container page (min-width: 48rem) {
+    .faq {
+      grid-template-columns: repeat(2, var(--col-wide));
+      column-gap: var(--gutter-wide);
+    }
+  }
+</style>

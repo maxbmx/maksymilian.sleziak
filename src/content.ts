@@ -33,6 +33,15 @@ export const site = {
   skipLink: "Przejdź do treści",
 };
 
+// Cloudflare Web Analytics: statystyki odwiedzin bez plików cookie.
+// Token znajdziesz w panelu Cloudflare: Analytics & Logs > Web Analytics > Add a site
+// (wybierz ręczną instalację, „JS snippet”), jako wartość "token" we wklejanym skrypcie.
+// null = analityka wyłączona. Skrypt trafia tylko do wersji produkcyjnej (gałąź main),
+// więc podgląd lokalny, testy i wersje preview nie zawyżają statystyk.
+export const analytics = {
+  cloudflareToken: "2d3665cb903f4b93adaebb024f3490a0" as string | null,
+};
+
 export const person = {
   name: "Maksymilian Śleziak",
   alternateName: "Maksymilian Sleziak",
@@ -58,6 +67,16 @@ export const contact = {
   linkedin: "https://www.linkedin.com/in/maksymiliansleziak/",
   // Adres, do którego prowadzą przyciski „Umówmy rozmowę” i „Umów rozmowę”.
   calendarUrl: "https://ageno.pl/kontakt",
+};
+
+// Oznaczenia UTM doklejane do linków prowadzących na stronę firmy (przyciski rozmowy
+// i linki „ageno.pl”). Dzięki nim w analityce Ageno widać wejścia ze strony osobistej.
+// Miejsce kliknięcia trafia do utm_content (np. hero, stopka). Adresów powyżej nie zmieniaj:
+// parametry dodaje src/lib/links.ts, a dane strukturalne zostają przy czystym adresie.
+export const utm = {
+  source: "maksymilian.sleziak.com",
+  medium: "referral",
+  campaign: "strona-osobista",
 };
 
 export const header = {
@@ -187,6 +206,72 @@ export const principles = {
       text: "W sytuacjach kryzysowych zachowuję spokój i biorę odpowiedzialność za komunikację z klientem.",
     },
   ],
+};
+
+export type FaqItem = { question: string; answer: string };
+
+export const faq = {
+  heading: "Pytania i odpowiedzi",
+  // Pusta lista = sekcja ukryta (także w danych strukturalnych FAQPage).
+  // Odpowiedź zaczyna się od sedna: pierwsze zdanie ma wystarczyć jako cała odpowiedź.
+  // Pytania i odpowiedzi trafiają bez zmian do JSON-LD, więc pisz je zwykłym tekstem.
+  items: [
+    {
+      question: "Czym zajmuje się Maksymilian Śleziak w Ageno?",
+      answer:
+        "Jestem współzałożycielem i współwłaścicielem Ageno. Odpowiadam za sprzedaż, marketing i relacje z klientami oraz wyznaczam kierunek rozwoju firmy. Za technologię odpowiada mój wspólnik, Krzysztof Kowalik, a projekty realizuje zespół około 35 specjalistów.",
+    },
+    {
+      question: "Od czego zacząć wdrażanie AI w sklepie internetowym?",
+      answer:
+        "Od danych produktowych. Asystent AI poleci tylko tę ofertę, którą potrafi odczytać, więc najpierw sprawdzamy i porządkujemy dane o produktach, cenach i dostępności. Zajmuje to kilka tygodni, a uporządkowane dane przydają się przy każdym kolejnym wdrożeniu.",
+    },
+    {
+      question: "Czy ChatGPT, Claude i Gemini potrafią odczytać ofertę mojego sklepu?",
+      answer:
+        "Tylko wtedy, gdy sklep udostępnia dane w formie czytelnej dla modelu. W audycie sprawdzamy API i dane produktowe, czyli to, czy asystent znajdzie ofertę, ceny i dostępność. Braki uzupełniamy w Pimcore i opisujemy dane w schema.org.",
+    },
+    {
+      question: "Kiedy AI w e-commerce się nie opłaca?",
+      answer:
+        "Wtedy, gdy nie da się wskazać liczby, którą wdrożenie ma poprawić. Każdy projekt zaczynamy od problemu biznesowego i tej liczby. Jeśli AI w danym miejscu się nie opłaca, mówię to na pierwszym spotkaniu.",
+    },
+    {
+      question: "Z jakimi platformami i firmami pracuje Ageno?",
+      answer:
+        "Wdrażamy i rozwijamy sklepy B2B i B2C na Magento i Pimcore. Ageno ma status Adobe Solution Partner. Pracujemy między innymi z Martes Sport, Henry Schein, Eurofirany, PRO, Kontakt-Simon i Avionaut, a z Martes Sport od 2012 roku.",
+    },
+  ] as FaqItem[],
+};
+
+/**
+ * Treść pliku /llms.txt: krótki opis strony dla modeli AI, w trzeciej osobie.
+ * Plik składa src/pages/llms.txt.ts z tych tekstów, obszarów AI i danych kontaktowych.
+ */
+export const llms = {
+  summary:
+    "Strona osobista Maksymiliana Śleziaka (pisane też: Maksymilian Sleziak), współzałożyciela i współwłaściciela Ageno, software house'u z Bielska-Białej. Ageno od 2010 roku wdraża i rozwija sklepy internetowe B2B i B2C na Magento i Pimcore, a dziś wdraża w nich AI.",
+  factsHeading: "Najważniejsze fakty",
+  facts: [
+    "Maksymilian Śleziak odpowiada w Ageno za sprzedaż, marketing i relacje z klientami oraz wyznacza kierunek rozwoju firmy.",
+    "Za technologię w Ageno odpowiada wspólnik, Krzysztof Kowalik.",
+    "Ageno działa od 2010 roku, zatrudnia około 35 osób i ma status Adobe Solution Partner.",
+    "Ponad 90% nowych projektów Ageno pochodzi z poleceń.",
+    "Klienci Ageno: Martes Sport (od 2012 roku), Henry Schein (od 2019), PRO i Avionaut (od 2020), Eurofirany, Kontakt-Simon.",
+    "Martes Sport: realizacja zamówienia w 24 godziny zamiast 7 dni.",
+    "Henry Schein: ponad 3000 klientów B2B z indywidualnymi cenami.",
+    "Maksymilian Śleziak zaczynał jako projektant UX/UI i frontend developer. Wcześniej tworzył markę odzieżową BMX i portal bmx.pl.",
+    "Mieszka w Bielsku-Białej.",
+  ],
+  areasHeading: "W czym pomaga Ageno w obszarze AI",
+  faqHeading: "Pytania i odpowiedzi (odpowiada Maksymilian Śleziak)",
+  linksHeading: "Linki",
+  links: {
+    site: "Strona osobista",
+    contact: "Rozmowa o e-commerce i AI",
+    linkedin: "Profil na LinkedIn",
+    company: "Ageno",
+  },
 };
 
 export type Testimonial = { quote: string; name: string; role: string; company: string };

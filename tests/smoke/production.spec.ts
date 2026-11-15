@@ -2,7 +2,7 @@
 //   npm run test:smoke                      -> https://maksymilian.sleziak.com
 //   BASE_URL=https://inny-adres npm run test:smoke
 import { expect, test } from "@playwright/test";
-import { person, site, TODO_MARKER } from "../../src/content";
+import { analytics, person, site, TODO_MARKER } from "../../src/content";
 import { parseSchema } from "../helpers";
 
 test("strona główna odpowiada 200 i jest indeksowalna", async ({ page }) => {
@@ -52,4 +52,17 @@ test("pliki techniczne dostępne", async ({ request }) => {
   for (const path of ["/robots.txt", "/sitemap-index.xml", "/favicon.svg", site.ogImage]) {
     expect((await request.get(path)).status(), path).toBe(200);
   }
+});
+
+test("analityka Cloudflare: skrypt z tokenem z content.ts, dopuszczony w CSP", async ({ page }) => {
+  test.skip(!analytics.cloudflareToken, "brak tokenu w src/content.ts");
+  const response = await page.goto("/");
+  const beacon = page.locator('script[src="https://static.cloudflareinsights.com/beacon.min.js"]');
+  await expect(beacon).toHaveCount(1);
+  expect(JSON.parse((await beacon.getAttribute("data-cf-beacon")) ?? "{}").token).toBe(
+    analytics.cloudflareToken,
+  );
+  const csp = response?.headers()["content-security-policy"] ?? "";
+  expect(csp).toContain("https://static.cloudflareinsights.com");
+  expect(csp).toContain("connect-src 'self' https://cloudflareinsights.com");
 });

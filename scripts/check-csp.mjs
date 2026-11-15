@@ -1,6 +1,8 @@
 /*
  * Strona ma jeden skrypt wstawiony w treść (src/scripts/snap.js). Polityka CSP w public/_headers
  * dopuszcza go po hashu. Ten skrypt sprawdza po buildzie, że hash się zgadza.
+ * Poza nim CSP dopuszcza tylko Cloudflare Web Analytics: skrypt z ANALYTICS_SCRIPT
+ * i zapytania do ANALYTICS_CONNECT (włączane tokenem w src/content.ts).
  *
  *   node scripts/check-csp.mjs          sprawdza dist/ i kończy błędem przy różnicy
  *   node scripts/check-csp.mjs --write  wpisuje aktualny hash do public/_headers
@@ -10,6 +12,8 @@ import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const HEADERS = "public/_headers";
+const ANALYTICS_SCRIPT = "https://static.cloudflareinsights.com";
+const ANALYTICS_CONNECT = "https://cloudflareinsights.com";
 const write = process.argv.includes("--write");
 
 const pages = readdirSync("dist", { recursive: true })
@@ -21,14 +25,30 @@ for (const page of pages) {
   const html = readFileSync(page, "utf8");
   for (const [, attrs, body] of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
     // Dane strukturalne (JSON-LD) nie są wykonywane, więc CSP ich nie dotyczy.
-    if (attrs.includes("application/ld+json") || attrs.includes("src=")) continue;
+    if (attrs.includes("application/ld+json")) continue;
+    if (attrs.includes("src=")) {
+      // Jedyny dozwolony skrypt z zewnątrz to analityka Cloudflare.
+      if (!attrs.includes(`src="${ANALYTICS_SCRIPT}/`)) {
+        console.error(`CSP: ${page} ładuje skrypt spoza dozwolonych adresów: <script${attrs}>`);
+        process.exit(1);
+      }
+      continue;
+    }
     hashes.add(`'sha256-${createHash("sha256").update(body).digest("base64")}'`);
   }
 }
 
 const headers = readFileSync(HEADERS, "utf8");
-const expected = ["'self'", ...hashes].join(" ");
+const expected = ["'self'", ...hashes, ANALYTICS_SCRIPT].join(" ");
 const current = headers.match(/script-src ([^;]*);/)?.[1];
+
+const connect = headers.match(/connect-src ([^;]*);/)?.[1];
+if (connect !== `'self' ${ANALYTICS_CONNECT}`) {
+  console.error(
+    `CSP: w ${HEADERS} connect-src ma być "'self' ${ANALYTICS_CONNECT}", jest "${connect}".`,
+  );
+  process.exit(1);
+}
 
 if (current === expected) {
   console.log(`CSP: script-src zgodne z treścią strony (${hashes.size} skrypt inline).`);
