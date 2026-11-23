@@ -369,8 +369,8 @@ a:hover {
 }
 
 /*
- * Sekcje (.row) i kolumny nie mają linii podziału, obramowań ani cieni: jedyne linie
- * na stronie to widoczna siatka, a sekcje rozdziela odstęp.
+ * Sekcje (.row) i kolumny nie mają linii podziału, obramowań ani cieni: sekcje rozdziela
+ * odstęp. Poza widoczną siatką jedyne linie to cienkie podziały pozycji w akordeonie pytań.
  */
 
 /* Dwie równe kolumny tekstu; w jednej kolumnie strony jedna pod drugą. */
