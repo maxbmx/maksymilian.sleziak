@@ -84,16 +84,18 @@ export const header = {
 };
 
 export const hero = {
-  // Nadtytuł nad imieniem i nazwiskiem. Razem tworzą nagłówek „Cześć, jestem Maksymilian Śleziak”.
-  eyebrow: "Cześć, jestem",
-  lead: "Współzałożyciel Ageno. Od 2010 roku budujemy sklepy internetowe B2B i B2C na Magento i Pimcore.",
-  specialties: "Dziś wdrażamy w nich AI, które ma zarabiać albo oszczędzać czas zespołu.",
-  // Krótka lista z żółtymi znacznikami pod tekstem. Liczby pochodzą z realizacji
-  // opisanych na ageno.pl (Martes Sport, Henry Schein Dental).
+  // Nadtytuł nad imieniem i nazwiskiem (osobny akapit, poza <h1>). Hero.astro łamie go
+  // tylko po kropkach środkowych, a kropka nie zaczyna wiersza.
+  eyebrow: "E-COMMERCE · TECHNOLOGIA · AI · BIZNES",
+  // Akapit pod nazwiskiem to lead i specialties. Lead jest też opisem osoby w JSON-LD (schema.ts).
+  lead: "Przedsiębiorca, współzałożyciel Ageno. Od 2010 roku rozwijam software house specjalizujący się w zaawansowanych platformach B2B i B2C.",
+  specialties:
+    "Pomagam firmom wykorzystywać technologię, automatyzację i AI do zwiększania sprzedaży, poprawy efektywności i rozwoju biznesu.",
+  // Krótka lista z żółtymi znacznikami pod tekstem.
   highlights: [
-    "Martes Sport: zamówienie w 24 godziny zamiast 7 dni",
-    "Henry Schein: ponad 3000 klientów B2B z indywidualnymi cenami",
-    "Adobe Solution Partner",
+    "Łączenie perspektywy zarządu i zespołu technologicznego od strategii do wdrożenia.",
+    "Technologia dla największych takich jak Martes Sport, Eurofirany.",
+    "Ponad 15 lat doświadczenia współtwórca Ageno.",
   ],
   cta: "Umówmy rozmowę",
   proof: "Ponad 90% naszych nowych projektów pochodzi z poleceń.",
