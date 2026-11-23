@@ -13,12 +13,17 @@ import T from "./T.astro";
         <ul class="faq" role="list">
           {faq.items.map((item) => (
             <li>
-              <h3>
-                <T text={item.question} />
-              </h3>
-              <p>
-                <T text={item.answer} />
-              </p>
+              <details>
+                <summary>
+                  <h3>
+                    <T text={item.question} />
+                  </h3>
+                  <span class="faq-icon" aria-hidden="true" />
+                </summary>
+                <p>
+                  <T text={item.answer} />
+                </p>
+              </details>
             </li>
           ))}
         </ul>
@@ -29,21 +34,84 @@ import T from "./T.astro";
 
 <style>
   /*
-   * Pytania jedno pod drugim; od 48rem w dwóch kolumnach o szerokim odstępie.
-   * Każda pozycja ma wysokość z siatki 32 px, więc wiersze obu kolumn trzymają linię.
+   * Akordeon pytań w jednej kolumnie: natywne <details>, bez skryptu, domyślnie zwinięte.
+   * Pozycje rozdzielają cienkie linie w kolorze podkreślenia linku (nad pierwszą i pod
+   * ostatnią też). Linie to cienie wewnętrzne, nie obramowania, więc nie dokładają
+   * 1 px do wysokości: pytanie ma kratkę odstępu nad i pod sobą, odpowiedź kratkę pod sobą,
+   * i każda pozycja, zwinięta czy rozwinięta, ma wysokość z siatki 32 px.
    */
   .faq {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: var(--s-4);
     list-style: none;
     padding: 0;
   }
 
-  @container page (min-width: 48rem) {
-    .faq {
-      grid-template-columns: repeat(2, var(--col-wide));
-      column-gap: var(--gutter-wide);
+  .faq li {
+    box-shadow: inset 0 1px 0 var(--c-link-line);
+  }
+
+  .faq li:last-child {
+    box-shadow:
+      inset 0 1px 0 var(--c-link-line),
+      inset 0 -1px 0 var(--c-link-line);
+  }
+
+  /* Cały wiersz pytania jest przyciskiem; domyślny trójkąt przeglądarki ukryty. */
+  summary {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: var(--s-2);
+    padding-block: var(--s-4);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  /* Pytanie może się zwęzić i złamać długie słowo (np. przy powiększonym tekście). */
+  summary h3 {
+    min-width: 0;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Plus z dwóch kresek w kratce 32 px (wiersz pytania); po rozwinięciu obraca się w ×. */
+  .faq-icon {
+    position: relative;
+    flex: none;
+    width: var(--s-4);
+    height: var(--s-4);
+    transition: transform 0.2s;
+  }
+
+  .faq-icon::before,
+  .faq-icon::after {
+    content: "";
+    position: absolute;
+    inset: 50% 25% auto;
+    height: var(--link-line);
+    margin-top: calc(var(--link-line) / -2);
+    background: currentColor;
+  }
+
+  .faq-icon::after {
+    transform: rotate(90deg);
+  }
+
+  details[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  /* Odpowiedź: zwykły tekst, przygaszony, w wygodnej długości wiersza (ok. 2/3 kolumny). */
+  details p {
+    max-width: max(var(--w-max-single), 66.667%);
+    padding-bottom: var(--s-4);
+    color: var(--c-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-icon {
+      transition: none;
     }
   }
 </style>

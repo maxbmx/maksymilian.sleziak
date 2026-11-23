@@ -125,6 +125,8 @@ test.describe("SEO i treść", () => {
     await expect(items).toHaveCount(faq.items.length);
     for (const [index, item] of faq.items.entries()) {
       expect(clean(await items.nth(index).locator("h3").innerText())).toBe(item.question);
+      // Odpowiedź jest zwinięta w <details>: rozwijamy ją kliknięciem pytania.
+      await items.nth(index).locator("summary").click();
       expect(clean(await items.nth(index).locator("p").innerText())).toBe(item.answer);
     }
 
