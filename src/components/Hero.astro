@@ -59,7 +59,11 @@ const eyebrow = hero.eyebrow.replaceAll(" · ", "\u00a0· ");
 <style>
   /*
    * Po lewej kolumna z nagłówkiem, tekstem i listą, po prawej portret; oba zaczynają się
-   * na tej samej linii. W jednej kolumnie wszystko jedno pod drugim, portret na końcu.
+   * na tej samej linii. Portret ma stałą ramkę, a tekst zajmuje resztę kontenera
+   * (od 1184 px: 704 px), żeby nazwisko mieściło się w jednym wierszu, a przycisk był nad
+   * zgięciem ekranu 1280 × 800 także przy szerszych fontach systemowych. Nad hero jedna
+   * kratka odstępu na każdej szerokości. W jednej kolumnie wszystko jedno pod drugim,
+   * portret na końcu.
    * Nad nazwiskiem nadtytuł (32 px), pod nim nazwisko (wiersze po 64 px): zawsze pełne kratki.
    */
   .hero {
@@ -147,12 +151,8 @@ const eyebrow = hero.eyebrow.replaceAll(" · ", "\u00a0· ");
   }
 
   @container page (min-width: 48rem) {
-    .hero {
-      padding-top: var(--s-8);
-    }
-
     .hero-grid {
-      grid-template-columns: repeat(2, var(--col-2));
+      grid-template-columns: minmax(0, 1fr) min(var(--w-portrait), var(--col-2));
       grid-template-areas: "text photo";
       column-gap: var(--gutter);
       align-items: start;
