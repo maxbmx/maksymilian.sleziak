@@ -9,40 +9,34 @@ const items = clients.items.map(({ name, logo }) => ({ name, logo: logo ? getLog
 ---
 
 <section class="row" aria-labelledby="clients-heading" data-grid="32y">
-  <div class="container clients-section">
-    <h2 id="clients-heading" class="clients-heading eyebrow">
-      {clients.heading}
-    </h2>
-    <ul class="clients" role="list" data-snap data-grid="32">
-      {items.map(({ name, logo }) => (
-        <li class="tile" data-grid="8">
-          {logo ? (
-            <img
-              src={logo.src}
-              alt={name}
-              width={logo.width}
-              height={logo.height}
-              loading="lazy"
-              decoding="async"
-            />
-          ) : (
-            <span class="client-name">{name}</span>
-          )}
-        </li>
-      ))}
-    </ul>
+  <div class="container">
+    <div class="col" data-snap data-grid="32">
+      <h2 id="clients-heading" class="section-heading">
+        {clients.heading}
+      </h2>
+      <ul class="clients" role="list" data-snap data-grid="32">
+        {items.map(({ name, logo }) => (
+          <li class="tile" data-grid="8">
+            {logo ? (
+              <img
+                src={logo.src}
+                alt={name}
+                width={logo.width}
+                height={logo.height}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span class="client-name">{name}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   </div>
 </section>
 
 <style>
-  .clients-section {
-    padding-block: var(--s-8);
-  }
-
-  .clients-heading {
-    padding-bottom: var(--s-4);
-  }
-
   /*
    * Pas logotypów bez tła. Każda ramka ma proporcję pliku, 3:2, i wymiary z siatki:
    * 144 × 96 px w jednej kolumnie strony, 288 × 192 px (9 × 6 kratek) od 768 px.
@@ -71,16 +65,14 @@ const items = clients.items.map(({ name, logo }) => ({ name, logo: logo ? getLog
     height: var(--frame-h);
   }
 
-  /* Znaki lekko wyciszone, pełna czerń po najechaniu. */
+  /*
+   * Znaki w pełnej czerni, bez przezroczystości i efektu po najechaniu. Pliki mają jeden
+   * ciemny kolor (#231430); filtr sprowadza go do czerni bez edytowania plików.
+   */
   .tile img {
     width: 100%;
     height: 100%;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-  }
-
-  .tile:hover img {
-    opacity: 1;
+    filter: brightness(0);
   }
 
   .client-name {
@@ -101,12 +93,6 @@ const items = clients.items.map(({ name, logo }) => ({ name, logo: logo ? getLog
   @container page (min-width: 62rem) {
     .clients {
       grid-template-columns: repeat(3, var(--frame-w));
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .tile img {
-      transition: none;
     }
   }
 </style>
